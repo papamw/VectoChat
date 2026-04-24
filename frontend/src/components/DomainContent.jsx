@@ -264,10 +264,11 @@ export default function DomainContent({ domain, onRefresh, onNotify }) {
               <div>
                 <div className="flex items-center gap-2 text-sm font-medium text-emerald-700 mb-1">
                   <Database className="w-4 h-4" />
-                  Base vectorielle active
+                  Base vectorielle&nbsp;
+                  <span className="font-bold text-emerald-800">BV/{domain.name}</span>
                 </div>
                 <p className="text-xs text-gray-500">
-                  {domain.chunk_count} chunks indexés · Modèle: all-MiniLM-L6-v2
+                  {domain.chunk_count} chunks indexés · paraphrase-multilingual-MiniLM-L12-v2
                 </p>
               </div>
               <button

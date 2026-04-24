@@ -10,7 +10,7 @@ function newConversation() {
   return { id: Date.now(), title: 'Nouvelle conversation', messages: [] }
 }
 
-export default function ChatView({ onNavigateToVectorDB }) {
+export default function ChatView({ onNavigateToVectorDB, refreshKey }) {
   const [conversations, setConversations] = useState([newConversation()])
   const [activeId, setActiveId]           = useState(conversations[0].id)
   const [input, setInput]                 = useState('')
@@ -35,14 +35,29 @@ export default function ChatView({ onNavigateToVectorDB }) {
     } catch { /* backend not running */ }
   }
 
-  useEffect(() => {
-    fetchModels()
+  const fetchDomains = () => {
     api.getDomains().then(res => {
       const withVdb = res.data.filter(d => d.has_vector_db)
       setDomains(withVdb)
-      if (withVdb.length > 0 && !selectedDomain) setSelectedDomain(withVdb[0])
+      setSelectedDomain(prev => {
+        if (prev) {
+          const updated = withVdb.find(d => d.name === prev.name)
+          return updated || (withVdb.length > 0 ? withVdb[0] : null)
+        }
+        return withVdb.length > 0 ? withVdb[0] : null
+      })
     }).catch(() => {})
+  }
+
+  useEffect(() => {
+    fetchModels()
+    fetchDomains()
   }, []) // eslint-disable-line
+
+  // Refresh domains every time we come back from VectorDB view
+  useEffect(() => {
+    if (refreshKey > 0) fetchDomains()
+  }, [refreshKey]) // eslint-disable-line
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })

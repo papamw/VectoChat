@@ -4,10 +4,16 @@ import VectorDBView from './views/VectorDBView'
 
 export default function App() {
   const [view, setView] = useState('chat')
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  if (view === 'vectordb') {
-    return <VectorDBView onBack={() => setView('chat')} />
+  const handleBack = () => {
+    setRefreshKey(k => k + 1)
+    setView('chat')
   }
 
-  return <ChatView onNavigateToVectorDB={() => setView('vectordb')} />
+  if (view === 'vectordb') {
+    return <VectorDBView onBack={handleBack} />
+  }
+
+  return <ChatView onNavigateToVectorDB={() => setView('vectordb')} refreshKey={refreshKey} />
 }

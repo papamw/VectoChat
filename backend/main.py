@@ -20,11 +20,19 @@ app.add_middleware(
 
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
-CHROMA_DIR = BASE_DIR / "chroma_db"
+CHROMA_DIR = BASE_DIR / "BV"
 CONFIG_PATH = BASE_DIR / "config.json"
 
 DATA_DIR.mkdir(exist_ok=True)
 CHROMA_DIR.mkdir(exist_ok=True)
+
+# Migrate old chroma_db/ → BV/ if needed
+_old_chroma = BASE_DIR / "chroma_db"
+if _old_chroma.exists() and not any(CHROMA_DIR.iterdir()):
+    import shutil as _shutil
+    for item in _old_chroma.iterdir():
+        _shutil.move(str(item), str(CHROMA_DIR / item.name))
+    _old_chroma.rmdir()
 
 ALLOWED_EXTENSIONS = {".pdf", ".txt", ".docx", ".md"}
 EMBED_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"

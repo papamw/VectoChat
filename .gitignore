@@ -11,6 +11,7 @@ build/
 
 # Données locales sensibles
 config.json
+BV/
 chroma_db/
 data/
 vector_db/

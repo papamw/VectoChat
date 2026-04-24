@@ -73,7 +73,7 @@ export default function VectorDBView({ onBack }) {
         headerSlot={
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors px-1 py-0.5 rounded"
+            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-blue-600 transition-colors px-1 py-0.5 rounded"
           >
             <ArrowLeft size={13} />
             Retour au chat
