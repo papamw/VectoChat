@@ -87,8 +87,8 @@ def collection_name(domain: str) -> str:
 
 
 def collection_exists(domain: str) -> bool:
-    names = [c.name for c in get_chroma_client().list_collections()]
-    return collection_name(domain) in names
+    # ChromaDB v0.6+ returns collection names directly as strings
+    return collection_name(domain) in get_chroma_client().list_collections()
 
 
 def get_collection(domain: str):
