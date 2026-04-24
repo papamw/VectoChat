@@ -127,7 +127,7 @@ export default function ChatView({ onNavigateToVectorDB, refreshKey }) {
       fd.append('model_id', selectedModel.id)
       fd.append('history', JSON.stringify(history))
 
-      const resp = await fetch('http://localhost:8000/chat', {
+      const resp = await fetch('/api/chat', {
         method: 'POST', body: fd, signal: controller.signal,
       })
 

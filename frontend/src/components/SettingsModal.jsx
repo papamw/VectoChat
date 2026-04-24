@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, Save, Eye, EyeOff, Server, Key, CheckCircle } from 'lucide-react'
 import axios from 'axios'
 
-const api = axios.create({ baseURL: 'http://localhost:8000' })
+const api = axios.create({ baseURL: '/api' })
 
 export default function SettingsModal({ onClose }) {
   const [form, setForm] = useState({

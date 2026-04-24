@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
-  timeout: 120_000, // 2 min for long vectorisation tasks
+  baseURL: '/api',
+  timeout: 120_000,
 })
 
 export const getDomains = () => api.get('/domains')
