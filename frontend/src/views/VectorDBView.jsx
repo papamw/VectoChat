@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import DomainList from '../components/DomainList'
 import DomainContent from '../components/DomainContent'
 import CreateDomainModal from '../components/CreateDomainModal'
+import ImportJsonModal from '../components/ImportJsonModal'
 import Notification from '../components/Notification'
 import * as api from '../api/client'
 
@@ -12,24 +13,26 @@ export default function VectorDBView({ onBack }) {
   const [domainLoading, setDomainLoading] = useState(false)
   const [notification, setNotification] = useState(null)
   const [showCreateDomain, setShowCreateDomain] = useState(false)
+  const [showImportJson, setShowImportJson] = useState(false)
 
   const notify = (message, type = 'success') => {
     setNotification({ message, type })
     setTimeout(() => setNotification(null), 4000)
   }
 
+  // useCallback sans dépendance sur selectedDomain — on utilise la forme
+  // fonctionnelle de setSelectedDomain pour toujours lire la valeur fraîche.
   const fetchDomains = useCallback(async () => {
     try {
       const res = await api.getDomains()
       setDomains(res.data)
-      if (selectedDomain) {
-        const updated = res.data.find(d => d.name === selectedDomain.name)
-        setSelectedDomain(updated || null)
-      }
+      setSelectedDomain(prev =>
+        prev ? (res.data.find(d => d.name === prev.name) ?? null) : null
+      )
     } catch {
       notify('Impossible de joindre le serveur backend', 'error')
     }
-  }, [selectedDomain?.name]) // eslint-disable-line
+  }, []) // eslint-disable-line
 
   useEffect(() => { fetchDomains() }, []) // eslint-disable-line
 
@@ -48,6 +51,15 @@ export default function VectorDBView({ onBack }) {
     } finally {
       setDomainLoading(false)
     }
+  }
+
+  const handleImportJsonSuccess = async (result) => {
+    setShowImportJson(false)
+    notify(`Base "${result.domain}" importée — ${result.chunks} chunks`)
+    const res = await api.getDomains()
+    setDomains(res.data)
+    const imported = res.data.find(d => d.name === result.domain)
+    setSelectedDomain(imported || null)
   }
 
   const handleDeleteDomain = async (name) => {
@@ -70,6 +82,7 @@ export default function VectorDBView({ onBack }) {
         onSelect={setSelectedDomain}
         onDelete={handleDeleteDomain}
         onCreateNew={() => setShowCreateDomain(true)}
+        onImportJson={() => setShowImportJson(true)}
         headerSlot={
           <button
             onClick={onBack}
@@ -94,6 +107,13 @@ export default function VectorDBView({ onBack }) {
           onClose={() => setShowCreateDomain(false)}
           onCreate={handleCreateDomain}
           loading={domainLoading}
+        />
+      )}
+
+      {showImportJson && (
+        <ImportJsonModal
+          onClose={() => setShowImportJson(false)}
+          onSuccess={handleImportJsonSuccess}
         />
       )}
 

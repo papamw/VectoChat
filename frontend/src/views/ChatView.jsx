@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import {
   Send, Plus, MessageSquare, Database, Sparkles,
-  ChevronDown, Bot, User, BookOpen, Loader2, Trash2, Settings
+  ChevronDown, Bot, User, BookOpen, Loader2, Trash2, Settings, FileJson, Layers
 } from 'lucide-react'
 import * as api from '../api/client'
 import SettingsModal from '../components/SettingsModal'
@@ -37,7 +37,8 @@ export default function ChatView({ onNavigateToVectorDB, refreshKey }) {
 
   const fetchDomains = () => {
     api.getDomains().then(res => {
-      const withVdb = res.data.filter(d => d.has_vector_db)
+      // Inclure les domaines ayant ChromaDB OU JSON DB
+      const withVdb = res.data.filter(d => d.has_chroma_db || d.has_json_db)
       setDomains(withVdb)
       setSelectedDomain(prev => {
         if (prev) {
@@ -338,12 +339,18 @@ export default function ChatView({ onNavigateToVectorDB, refreshKey }) {
                     <button
                       key={d.name}
                       onClick={() => { setSelectedDomain(d); setDomainOpen(false) }}
-                      className={`w-full text-left px-3 py-2 text-sm hover:bg-white/8 transition-colors ${
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-white/8 transition-colors flex items-center gap-2 ${
                         selectedDomain?.name === d.name ? 'text-emerald-400' : 'text-white/80'
                       }`}
                     >
-                      {d.name}
-                      <span className="ml-2 text-xs text-white/30">{d.chunk_count} chunks</span>
+                      {d.has_chroma_db && d.has_json_db
+                        ? <Layers size={12} className="text-violet-400 flex-shrink-0" />
+                        : d.has_json_db
+                          ? <FileJson size={12} className="text-emerald-400 flex-shrink-0" />
+                          : <Database size={12} className="text-blue-400 flex-shrink-0" />
+                      }
+                      <span className="flex-1 truncate">{d.name}</span>
+                      <span className="text-xs text-white/30">{d.chunk_count} chunks</span>
                     </button>
                   ))
                 )}

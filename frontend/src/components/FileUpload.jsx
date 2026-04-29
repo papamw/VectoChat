@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { X, UploadCloud, File } from 'lucide-react'
 import * as api from '../api/client'
 
-const ACCEPTED = '.pdf,.txt,.docx,.md'
+const ACCEPTED = '.pdf,.txt,.docx,.md,.jpg,.jpeg,.png,.tiff,.tif,.bmp,.webp,.gif'
 const MAX_SIZE_MB = 50
 
 export default function FileUpload({ domain, onClose, onSuccess }) {
@@ -77,7 +77,7 @@ export default function FileUpload({ domain, onClose, onSuccess }) {
             <p className="text-sm text-gray-500">
               Glisser-déposer ou <span className="text-blue-600 font-medium">parcourir</span>
             </p>
-            <p className="text-xs text-gray-400 mt-1">PDF, TXT, DOCX, Markdown — max {MAX_SIZE_MB} Mo</p>
+            <p className="text-xs text-gray-400 mt-1">PDF, TXT, DOCX, Markdown, Images (JPG, PNG, TIFF…) — max {MAX_SIZE_MB} Mo</p>
             <input
               ref={inputRef}
               type="file"

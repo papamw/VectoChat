@@ -1,6 +1,6 @@
-import { FolderOpen, Folder, Trash2, Plus, Database } from 'lucide-react'
+import { FolderOpen, Folder, Trash2, Plus, Database, FileJson, Layers } from 'lucide-react'
 
-export default function DomainList({ domains, selectedDomain, onSelect, onDelete, onCreateNew, headerSlot }) {
+export default function DomainList({ domains, selectedDomain, onSelect, onDelete, onCreateNew, onImportJson, headerSlot }) {
   return (
     <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-full shrink-0">
       {/* Header */}
@@ -10,10 +10,16 @@ export default function DomainList({ domains, selectedDomain, onSelect, onDelete
           <Database className="w-5 h-5 text-blue-600" />
           <h1 className="font-bold text-gray-800 text-base leading-tight">Vector DB Generator</h1>
         </div>
-        <button onClick={onCreateNew} className="btn-primary w-full justify-center text-sm">
-          <Plus className="w-4 h-4" />
-          Nouveau domaine
-        </button>
+        <div className="flex flex-col gap-2">
+          <button onClick={onCreateNew} className="btn-primary w-full justify-center text-sm">
+            <Plus className="w-4 h-4" />
+            Nouveau domaine
+          </button>
+          <button onClick={onImportJson} className="btn-secondary w-full justify-center text-sm">
+            <FileJson className="w-4 h-4" />
+            Importer JSON
+          </button>
+        </div>
       </div>
 
       {/* Domain list */}
@@ -45,15 +51,23 @@ export default function DomainList({ domains, selectedDomain, onSelect, onDelete
 
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{domain.name}</div>
-                <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                   <span className="text-[11px] text-gray-400">
                     {domain.files.length} fichier{domain.files.length !== 1 ? 's' : ''}
                   </span>
-                  {domain.has_vector_db && (
-                    <span className="badge bg-emerald-50 text-emerald-600 text-[10px]">
-                      ✓ VDB
+                  {domain.has_chroma_db && domain.has_json_db ? (
+                    <span className="badge bg-violet-50 text-violet-600 text-[10px] flex items-center gap-0.5">
+                      <Layers className="w-2.5 h-2.5" /> Les deux
                     </span>
-                  )}
+                  ) : domain.has_chroma_db ? (
+                    <span className="badge bg-blue-50 text-blue-600 text-[10px] flex items-center gap-0.5">
+                      <Database className="w-2.5 h-2.5" /> Chroma
+                    </span>
+                  ) : domain.has_json_db ? (
+                    <span className="badge bg-emerald-50 text-emerald-600 text-[10px] flex items-center gap-0.5">
+                      <FileJson className="w-2.5 h-2.5" /> JSON
+                    </span>
+                  ) : null}
                 </div>
               </div>
 

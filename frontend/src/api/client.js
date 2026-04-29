@@ -25,9 +25,10 @@ export const uploadFile = (domain, file) => {
 export const deleteFile = (domain, filename) =>
   api.delete('/file', { params: { domain, filename } })
 
-export const generateVectorDB = (domain) => {
+export const generateVectorDB = (domain, dbFormat = 'chroma') => {
   const form = new FormData()
   form.append('domain', domain)
+  form.append('db_format', dbFormat)
   return api.post('/generate-vector-db', form)
 }
 
@@ -56,3 +57,17 @@ export const search = (domain, query, topK = 5) => {
   form.append('top_k', String(topK))
   return api.post('/search', form)
 }
+
+export const exportJsonDB = (domain, includeEmbeddings = true) =>
+  api.get(`/export-json/${domain}`, { params: { embeddings: includeEmbeddings } })
+
+export const importJsonDB = (file, domainName = '') => {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('domain_name', domainName)
+  return api.post('/import-json', form, { timeout: 300_000 })
+}
+
+export const deleteChromaDB = (domain) => api.delete(`/vector-db/${domain}/chroma`)
+export const deleteJsonDB    = (domain) => api.delete(`/vector-db/${domain}/json`)
+export const getJsonDB       = (domain) => api.get(`/json-db/${domain}`)
